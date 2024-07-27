@@ -1,0 +1,17 @@
+.event-selector {
+    margin-bottom: var(--spacing-base * 2);
+  }
+  
+  .event-selector label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: var(--spacing-base);
+  }
+  
+  .event-selector select {
+    width: 100%;
+    padding: var(--spacing-base);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: var(--font-size-base);
+  }

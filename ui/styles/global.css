@@ -1,0 +1,33 @@
+@import './variables.css';
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  color: var(--text-color);
+  background-color: var(--background-color);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-base);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--primary-color);
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  padding: var(--spacing-base) var(--spacing-base * 2);
+  border-radius: 4px;
+  font-size: var(--font-size-base);
+}
+
+button:focus {
+  outline: none;
+}

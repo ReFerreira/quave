@@ -58,11 +58,13 @@ export const App = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const eventPeople = useMemo(() =>
-    selectedEvent
-      ? people.filter(person => person.communityId === selectedEvent)
-      : []
-    , [selectedEvent, people]);
+  const eventPeople = useMemo(
+    () =>
+      selectedEvent
+        ? people.filter((person) => person.communityId === selectedEvent)
+        : [],
+    [selectedEvent, people]
+  );
 
   if (!ready) {
     return <div>Loading...</div>;
@@ -71,15 +73,20 @@ export const App = () => {
     <div className="container mx-auto p-4">
       <h1 className="text-lg font-bold">Event Check-in</h1>
       <div className="mb-4">
-        <label htmlFor="eventSelector" className="block text-sm font-medium text-gray-700">Select an Event</label>
+        <label
+          htmlFor="eventSelector"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Select an Event
+        </label>
         <select
           id="eventSelector"
           value={selectedEvent}
           onChange={handleEventChange}
-          className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+          className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
         >
           <option value="">Select an event</option>
-          {communities.map(event => (
+          {communities.map((event) => (
             <option key={event._id} value={event._id}>
               {event.name}
             </option>
@@ -87,25 +94,53 @@ export const App = () => {
         </select>
       </div>
       <div className="mb-4">
-        <h3>People in the event right now: {eventPeople.filter(person => person.checkInDate && !person.checkOutDate).length}</h3>
-        <h3>People not checked in: {eventPeople.filter(person => !person.checkInDate).length}</h3>
+        <h3>
+          People in the event right now:{' '}
+          {
+            eventPeople.filter(
+              (person) => person.checkInDate && !person.checkOutDate
+            ).length
+          }
+        </h3>
+        <h3>
+          People not checked in:{' '}
+          {eventPeople.filter((person) => !person.checkInDate).length}
+        </h3>
       </div>
       <ul>
-        {eventPeople.map(person => {
+        {eventPeople.map((person) => {
           const checkInDate = new Date(person.checkInDate);
           const now = new Date();
-          const shouldShowCheckOutButton = person.checkInDate && !person.checkOutDate && (now - checkInDate) > 5000;
+          const shouldShowCheckOutButton =
+            person.checkInDate &&
+            !person.checkOutDate &&
+            now - checkInDate > 5000;
           return (
-            <li key={person._id} className="mb-2 p-2 border border-gray-300 rounded">
-              <div>{person.firstName} {person.lastName}</div>
+            <li
+              key={person._id}
+              className="mb-2 rounded border border-gray-300 p-2"
+            >
+              <div>
+                {person.firstName} {person.lastName}
+              </div>
               <div>{person.company}</div>
               <div>{person.title}</div>
-              <div>Check-in date: {person.checkInDate ? new Date(person.checkInDate).toLocaleString() : 'N/A'}</div>
-              <div>Check-out date: {person.checkOutDate ? new Date(person.checkOutDate).toLocaleString() : 'N/A'}</div>
+              <div>
+                Check-in date:{' '}
+                {person.checkInDate
+                  ? new Date(person.checkInDate).toLocaleString()
+                  : 'N/A'}
+              </div>
+              <div>
+                Check-out date:{' '}
+                {person.checkOutDate
+                  ? new Date(person.checkOutDate).toLocaleString()
+                  : 'N/A'}
+              </div>
               {!person.checkInDate && (
                 <button
                   onClick={() => handleCheckIn(person._id)}
-                  className="bg-green-500 text-white px-2 py-1 rounded"
+                  className="rounded bg-green-500 px-2 py-1 text-white"
                 >
                   Check-in {person.firstName} {person.lastName}
                 </button>
@@ -113,7 +148,7 @@ export const App = () => {
               {checkInTimes && shouldShowCheckOutButton && (
                 <button
                   onClick={() => handleCheckOut(person._id)}
-                  className="bg-red-500 text-white px-2 py-1 rounded"
+                  className="rounded bg-red-500 px-2 py-1 text-white"
                 >
                   Check-out {person.firstName} {person.lastName}
                 </button>
