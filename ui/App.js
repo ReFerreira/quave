@@ -15,6 +15,7 @@ export const App = () => {
   const { communities, people, ready } = useTracker(() => {
     const communitiesHandle = Meteor.subscribe('communities');
     const peopleHandle = Meteor.subscribe('people');
+
     return {
       communities: Communities.find().fetch(),
       people: People.find().fetch(),
@@ -22,10 +23,7 @@ export const App = () => {
     };
   }, []);
 
-  const handleEventChange = useCallback(
-    (e) => setSelectedEvent(e.target.value),
-    []
-  );
+  const handleEventChange = useCallback((e) => setSelectedEvent(e.target.value), []);
 
   const handleCheckIn = useCallback((personId) => {
     Meteor.call('people.checkIn', personId, (error) => {
@@ -41,18 +39,26 @@ export const App = () => {
       }
     });
   }, []);
+
   const handleCheckOut = useCallback((personId) => {
     Meteor.call('people.checkOut', personId, (error) => {
       if (error) {
         // console.error('Check-out failed', error);
       } else {
         // console.log('Check-out successful');
+        setCheckInTimes((prevTimes) => {
+          const updatedTimes = { ...prevTimes };
+          delete updatedTimes[personId];
+          return updatedTimes;
+        });
       }
     });
   }, []);
 
   useEffect(() => {
-    if (!timerActive) return null;
+    if (!timerActive) {
+      return () => {};
+    }
 
     const interval = setInterval(() => {
       setCheckInTimes((prevTimes) => {
