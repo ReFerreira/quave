@@ -3,10 +3,15 @@ import { useTracker } from 'meteor/react-meteor-data';
 import { Communities } from '../communities/communities';
 import { People } from '../people/people';
 import { Meteor } from 'meteor/meteor';
+import { EventSelector } from './components/EventSelector/EventSelector';
+import { PeopleList } from './components/PeopleList/PeopleList';
+import { Summary } from './components/Summary/Summary';
 
 export const App = () => {
   const [selectedEvent, setSelectedEvent] = useState('');
   const [checkInTimes, setCheckInTimes] = useState({});
+  const [timerActive, setTimerActive] = useState(false);
+
   const { communities, people, ready } = useTracker(() => {
     const communitiesHandle = Meteor.subscribe('communities');
     const peopleHandle = Meteor.subscribe('people');
@@ -16,9 +21,10 @@ export const App = () => {
       ready: communitiesHandle.ready() && peopleHandle.ready(),
     };
   }, []);
-  const handleEventChange = useCallback((e) => {
-    setSelectedEvent(e.target.value);
-  }, []);
+
+  const handleEventChange = useCallback((e) =>
+    setSelectedEvent(e.target.value), []);
+  
   const handleCheckIn = useCallback((personId) => {
     Meteor.call('people.checkIn', personId, (error) => {
       if (error) {
@@ -29,6 +35,7 @@ export const App = () => {
           ...prevTimes,
           [personId]: new Date().getTime(),
         }));
+        setTimerActive(true);
       }
     });
   }, []);
@@ -43,20 +50,33 @@ export const App = () => {
   }, []);
 
   useEffect(() => {
+    // if (!timerActive) return;
+
     const interval = setInterval(() => {
       setCheckInTimes((prevTimes) => {
         const now = new Date().getTime();
         const updatedTimes = { ...prevTimes };
+        let hasActiveCheckIns = false;
+
         Object.keys(updatedTimes).forEach((personId) => {
           if (now - updatedTimes[personId] > 5000) {
             delete updatedTimes[personId];
+          } else {
+            hasActiveCheckIns = true;
           }
         });
+
+        if (!hasActiveCheckIns) {
+          setTimerActive(false);
+          clearInterval(interval);
+        }
+
         return updatedTimes;
       });
     }, 1000);
+
     return () => clearInterval(interval);
-  }, []);
+  }, [timerActive]);
 
   const eventPeople = useMemo(
     () =>
@@ -72,91 +92,9 @@ export const App = () => {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-lg font-bold">Event Check-in</h1>
-      <div className="mb-4">
-        <label
-          htmlFor="eventSelector"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Select an Event
-        </label>
-        <select
-          id="eventSelector"
-          value={selectedEvent}
-          onChange={handleEventChange}
-          className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-        >
-          <option value="">Select an event</option>
-          {communities.map((event) => (
-            <option key={event._id} value={event._id}>
-              {event.name}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="mb-4">
-        <h3>
-          People in the event right now:{' '}
-          {
-            eventPeople.filter(
-              (person) => person.checkInDate && !person.checkOutDate
-            ).length
-          }
-        </h3>
-        <h3>
-          People not checked in:{' '}
-          {eventPeople.filter((person) => !person.checkInDate).length}
-        </h3>
-      </div>
-      <ul>
-        {eventPeople.map((person) => {
-          const checkInDate = new Date(person.checkInDate);
-          const now = new Date();
-          const shouldShowCheckOutButton =
-            person.checkInDate &&
-            !person.checkOutDate &&
-            now - checkInDate > 5000;
-          return (
-            <li
-              key={person._id}
-              className="mb-2 rounded border border-gray-300 p-2"
-            >
-              <div>
-                {person.firstName} {person.lastName}
-              </div>
-              <div>{person.company}</div>
-              <div>{person.title}</div>
-              <div>
-                Check-in date:{' '}
-                {person.checkInDate
-                  ? new Date(person.checkInDate).toLocaleString()
-                  : 'N/A'}
-              </div>
-              <div>
-                Check-out date:{' '}
-                {person.checkOutDate
-                  ? new Date(person.checkOutDate).toLocaleString()
-                  : 'N/A'}
-              </div>
-              {!person.checkInDate && (
-                <button
-                  onClick={() => handleCheckIn(person._id)}
-                  className="rounded bg-green-500 px-2 py-1 text-white"
-                >
-                  Check-in {person.firstName} {person.lastName}
-                </button>
-              )}
-              {checkInTimes && shouldShowCheckOutButton && (
-                <button
-                  onClick={() => handleCheckOut(person._id)}
-                  className="rounded bg-red-500 px-2 py-1 text-white"
-                >
-                  Check-out {person.firstName} {person.lastName}
-                </button>
-              )}
-            </li>
-          );
-        })}
-      </ul>
+      <EventSelector selectedEvent={selectedEvent} handleEventChange={handleEventChange} communities={communities} />
+      <Summary eventPeople={eventPeople} />
+      <PeopleList eventPeople={eventPeople} handleCheckIn={handleCheckIn} handleCheckOut={handleCheckOut} checkInTimes={checkInTimes} />
     </div>
   );
 };
