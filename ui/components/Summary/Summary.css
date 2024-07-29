@@ -1,0 +1,7 @@
+.summary {
+    margin-bottom: var(--spacing-base * 2);
+  }
+  
+  .summary h3 {
+    margin-bottom: var(--spacing-base);
+  }
