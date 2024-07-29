@@ -22,9 +22,11 @@ export const App = () => {
     };
   }, []);
 
-  const handleEventChange = useCallback((e) =>
-    setSelectedEvent(e.target.value), []);
-  
+  const handleEventChange = useCallback(
+    (e) => setSelectedEvent(e.target.value),
+    []
+  );
+
   const handleCheckIn = useCallback((personId) => {
     Meteor.call('people.checkIn', personId, (error) => {
       if (error) {
@@ -50,7 +52,7 @@ export const App = () => {
   }, []);
 
   useEffect(() => {
-    // if (!timerActive) return;
+    if (!timerActive) return null;
 
     const interval = setInterval(() => {
       setCheckInTimes((prevTimes) => {
@@ -92,9 +94,18 @@ export const App = () => {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-lg font-bold">Event Check-in</h1>
-      <EventSelector selectedEvent={selectedEvent} handleEventChange={handleEventChange} communities={communities} />
+      <EventSelector
+        selectedEvent={selectedEvent}
+        handleEventChange={handleEventChange}
+        communities={communities}
+      />
       <Summary eventPeople={eventPeople} />
-      <PeopleList eventPeople={eventPeople} handleCheckIn={handleCheckIn} handleCheckOut={handleCheckOut} checkInTimes={checkInTimes} />
+      <PeopleList
+        eventPeople={eventPeople}
+        handleCheckIn={handleCheckIn}
+        handleCheckOut={handleCheckOut}
+        checkInTimes={checkInTimes}
+      />
     </div>
   );
 };
