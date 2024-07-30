@@ -1,5 +1,4 @@
 import React from 'react';
-import './PeopleList.css';
 
 export const PeopleList = ({
   eventPeople,
@@ -38,7 +37,7 @@ export const PeopleList = ({
           {!person.checkInDate && (
             <button
               onClick={() => handleCheckIn(person._id)}
-              className="rounded bg-green-500 px-2 py-1 text-white"
+              className="rounded bg-green-500 px-2 py-1 text-white my-1.5"
             >
               Check-in {person.firstName} {person.lastName}
             </button>
@@ -46,7 +45,7 @@ export const PeopleList = ({
           {checkInTimes && shouldShowCheckOutButton && (
             <button
               onClick={() => handleCheckOut(person._id)}
-              className="rounded bg-red-500 px-2 py-1 text-white"
+              className="rounded bg-red-500 px-2 py-1 text-white my-1.5"
             >
               Check-out {person.firstName} {person.lastName}
             </button>

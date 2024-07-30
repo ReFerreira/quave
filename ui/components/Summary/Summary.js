@@ -1,5 +1,4 @@
 import React from 'react';
-import './Summary.css'; // Verifique se o caminho para o CSS está correto e se o arquivo CSS existe.
 
 export const Summary = ({ eventPeople }) => {
   if (!eventPeople || eventPeople.length === 0) {
@@ -27,7 +26,7 @@ export const Summary = ({ eventPeople }) => {
     .join(', ');
 
   return (
-    <div className="summary">
+    <div className="text-gray-800 mb-6">
       <h3>People in the event right now: {peopleInEvent}</h3>
       <h3>
         People by company in the event right now:{' '}
