@@ -23,7 +23,10 @@ export const App = () => {
     };
   }, []);
 
-  const handleEventChange = useCallback((e) => setSelectedEvent(e.target.value), []);
+  const handleEventChange = useCallback(
+    (e) => setSelectedEvent(e.target.value),
+    []
+  );
 
   const handleCheckIn = useCallback((personId) => {
     Meteor.call('people.checkIn', personId, (error) => {
@@ -98,7 +101,7 @@ export const App = () => {
     return <div>Loading...</div>;
   }
   return (
-    <div className="container mx-auto p-4">
+    <div className="mx-auto w-full p-4">
       <h1 className="text-lg font-bold">Event Check-in</h1>
       <EventSelector
         selectedEvent={selectedEvent}

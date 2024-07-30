@@ -26,7 +26,7 @@ export const Summary = ({ eventPeople }) => {
     .join(', ');
 
   return (
-    <div className="summary">
+    <div className="mb-6 text-gray-800">
       <h3>People in the event right now: {peopleInEvent}</h3>
       <h3>
         People by company in the event right now:{' '}
