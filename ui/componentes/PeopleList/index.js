@@ -32,7 +32,7 @@ export const PeopleList = ({
             Check-out date:{' '}
             {person.checkOutDate
               ? new Date(person.checkOutDate).toLocaleString()
-              : 'N/A'}
+              : 'N/A '}
           </div>
           {!person.checkInDate && (
             <button
