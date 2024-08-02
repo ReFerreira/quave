@@ -3,9 +3,9 @@ import { useTracker } from 'meteor/react-meteor-data';
 import { Communities } from '../communities/communities';
 import { People } from '../people/people';
 import { Meteor } from 'meteor/meteor';
-import { EventSelector } from './components/EventSelector/EventSelector';
-import { PeopleList } from './components/PeopleList/PeopleList';
-import { Summary } from './components/Summary/Summary';
+import { EventSelector } from './components/EventSelector';
+import { PeopleList } from './components/PeopleList';
+import { Summary } from './components/Summary';
 
 export const App = () => {
   const [selectedEvent, setSelectedEvent] = useState('');
@@ -108,6 +108,7 @@ export const App = () => {
         handleEventChange={handleEventChange}
         communities={communities}
       />
+
       <Summary eventPeople={eventPeople} />
       <PeopleList
         eventPeople={eventPeople}
