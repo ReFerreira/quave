@@ -30,20 +30,22 @@ export const PeopleList = ({
     });
 
   return (
-    <div>
+    <div className="flex flex-col justify-end">
       <input
         type="text"
         value={searchTerm}
         onChange={handleSearchChange}
         placeholder="Search by name"
-        className="mb-4 p-2 border border-gray-300 rounded"
+        className="mb-4 ml-auto rounded border border-gray-300 p-2"
       />
       <ul className="people-list">
         {filteredEventPeople.map((person) => {
           const checkInDate = new Date(person.checkInDate);
           const now = new Date();
           const shouldShowCheckOutButton =
-            person.checkInDate && !person.checkOutDate && now - checkInDate > 5000;
+            person.checkInDate &&
+            !person.checkOutDate &&
+            now - checkInDate > 5000;
           return (
             <li
               key={person._id}
@@ -69,7 +71,7 @@ export const PeopleList = ({
               {!person.checkInDate && (
                 <button
                   onClick={() => handleCheckIn(person._id)}
-                  className="rounded bg-green-500 px-2 py-1 text-white my-1.5"
+                  className="my-1.5 rounded bg-green-500 px-2 py-1 text-white"
                 >
                   Check-in {person.firstName} {person.lastName}
                 </button>
@@ -77,7 +79,7 @@ export const PeopleList = ({
               {checkInTimes && shouldShowCheckOutButton && (
                 <button
                   onClick={() => handleCheckOut(person._id)}
-                  className="rounded bg-red-500 px-2 py-1 text-white my-1.5"
+                  className="my-1.5 rounded bg-red-500 px-2 py-1 text-white"
                 >
                   Check-out {person.firstName} {person.lastName}
                 </button>
@@ -87,5 +89,5 @@ export const PeopleList = ({
         })}
       </ul>
     </div>
-  )
-}
+  );
+};
