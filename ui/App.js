@@ -3,9 +3,9 @@ import { useTracker } from 'meteor/react-meteor-data';
 import { Communities } from '../communities/communities';
 import { People } from '../people/people';
 import { Meteor } from 'meteor/meteor';
-import { EventSelector } from './components/EventSelector/EventSelector';
-import { PeopleList } from './components/PeopleList/PeopleList';
-import { Summary } from './components/Summary/Summary';
+import { EventSelector } from './components/EventSelector';
+import { PeopleList } from './components/PeopleList';
+import { Summary } from './components/Summary';
 
 export const App = () => {
   const [selectedEvent, setSelectedEvent] = useState('');
@@ -23,7 +23,10 @@ export const App = () => {
     };
   }, []);
 
-  const handleEventChange = useCallback((e) => setSelectedEvent(e.target.value), []);
+  const handleEventChange = useCallback(
+    (e) => setSelectedEvent(e.target.value),
+    []
+  );
 
   const handleCheckIn = useCallback((personId) => {
     Meteor.call('people.checkIn', personId, (error) => {
@@ -98,13 +101,14 @@ export const App = () => {
     return <div>Loading...</div>;
   }
   return (
-    <div className="w-full mx-auto p-4">
+    <div className="mx-auto w-full p-4">
       <h1 className="text-lg font-bold">Event Check-in</h1>
       <EventSelector
         selectedEvent={selectedEvent}
         handleEventChange={handleEventChange}
         communities={communities}
       />
+
       <Summary eventPeople={eventPeople} />
       <PeopleList
         eventPeople={eventPeople}
