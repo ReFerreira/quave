@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { BsChevronDown, BsChevronUp } from "react-icons/bs";
-
+import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
 
 export const Summary = ({ eventPeople }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -33,25 +32,27 @@ export const Summary = ({ eventPeople }) => {
 
       <h3>People by company in the event right now:</h3>
       {peopleByCompanyString.map(([company, quantity], index) => {
-        if (!isExpanded && index > 3) return null
+        if (!isExpanded && index > 3) return null;
 
         return (
           <li key={Math.random()}>
             {company}: {quantity}
           </li>
-        )
-
+        );
       })}
 
       {peopleByCompanyString.length > 3 && (
-        <div onClick={() => setIsExpanded(!isExpanded)} className='cursor-pointer'>
+        <div
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="cursor-pointer"
+        >
           {!isExpanded ? (
             <div className="flex items-center">
-              <span className='mr-1.25'>ver mais</span> <BsChevronDown />
+              <span className="mr-1.25">ver mais</span> <BsChevronDown />
             </div>
           ) : (
             <div className="flex items-center">
-              <span className='mr-1.25'>ver menos</span> <BsChevronUp />
+              <span className="mr-1.25">ver menos</span> <BsChevronUp />
             </div>
           )}
         </div>

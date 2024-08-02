@@ -6,17 +6,14 @@ export const EventSelector = ({
   communities,
 }) => (
   <div className="mb-6">
-    <label
-      htmlFor="eventSelector"
-      className="block font-bold mb-4"
-    >
+    <label htmlFor="eventSelector" className="mb-4 block font-bold">
       Select an Event
     </label>
     <select
       id="eventSelector"
       value={selectedEvent}
       onChange={handleEventChange}
-      className="w-full p-4 border border-gray-300 rounded-md text-base"
+      className="w-full rounded-md border border-gray-300 p-4 text-base"
     >
       <option value="">Select an event</option>
       {communities.map((event) => (
