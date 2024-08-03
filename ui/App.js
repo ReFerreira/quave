@@ -101,7 +101,7 @@ export const App = () => {
     return <div>Loading...</div>;
   }
   return (
-    <div className="mx-auto w-full p-4">
+    <div className="mx-auto w-full p-4 flex flex-col items-center lg:w-3/4">
       <h1 className="text-lg font-bold">Event Check-in</h1>
       <EventSelector
         selectedEvent={selectedEvent}

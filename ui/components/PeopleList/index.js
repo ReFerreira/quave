@@ -30,15 +30,15 @@ export const PeopleList = ({
     });
 
   return (
-    <div className="flex flex-col justify-end">
+    <div className="flex flex-col justify-end w-full max-w-[736px] mx-auto">
       <input
         type="text"
         value={searchTerm}
         onChange={handleSearchChange}
         placeholder="Search by name"
-        className="mb-4 ml-auto rounded border border-gray-300 p-2"
+        className="mb-4 rounded border border-gray-300 p-2 w-full sm:w-auto sm:ml-auto"
       />
-      <ul className="people-list">
+      <ul className="list-none p-0 m-0">
         {filteredEventPeople.map((person) => {
           const checkInDate = new Date(person.checkInDate);
           const now = new Date();
@@ -49,7 +49,7 @@ export const PeopleList = ({
           return (
             <li
               key={person._id}
-              className="mb-2 rounded border border-gray-300 p-2"
+              className="mb-2 rounded border border-gray-300 p-2 flex flex-col"
             >
               <div>
                 {person.firstName} {person.lastName}
