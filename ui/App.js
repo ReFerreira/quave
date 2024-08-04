@@ -1,121 +1,93 @@
-import React, { useCallback, useEffect, useState, useMemo } from 'react';
-import { useTracker } from 'meteor/react-meteor-data';
-import { Communities } from '../communities/communities';
-import { People } from '../people/people';
-import { Meteor } from 'meteor/meteor';
-import { EventSelector } from './components/EventSelector';
-import { PeopleList } from './components/PeopleList';
-import { Summary } from './components/Summary';
+import React, { useState } from 'react';
 
-export const App = () => {
-  const [selectedEvent, setSelectedEvent] = useState('');
-  const [checkInTimes, setCheckInTimes] = useState({});
-  const [timerActive, setTimerActive] = useState(false);
+export const PeopleList = ({
+  eventPeople,
+  handleCheckIn,
+  handleCheckOut,
+  checkInTimes,
+}) => {
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const { communities, people, ready } = useTracker(() => {
-    const communitiesHandle = Meteor.subscribe('communities');
-    const peopleHandle = Meteor.subscribe('people');
-
-    return {
-      communities: Communities.find().fetch(),
-      people: People.find().fetch(),
-      ready: communitiesHandle.ready() && peopleHandle.ready(),
-    };
-  }, []);
-
-  const handleEventChange = useCallback(
-    (e) => setSelectedEvent(e.target.value),
-    []
-  );
-
-  const handleCheckIn = useCallback((personId) => {
-    Meteor.call('people.checkIn', personId, (error) => {
-      if (error) {
-        // console.error('Check-in failed', error);
-      } else {
-        // console.log('Check-in successful');
-        setCheckInTimes((prevTimes) => ({
-          ...prevTimes,
-          [personId]: new Date().getTime(),
-        }));
-        setTimerActive(true);
-      }
-    });
-  }, []);
-
-  const handleCheckOut = useCallback((personId) => {
-    Meteor.call('people.checkOut', personId, (error) => {
-      if (error) {
-        // console.error('Check-out failed', error);
-      } else {
-        // console.log('Check-out successful');
-        setCheckInTimes((prevTimes) => {
-          const updatedTimes = { ...prevTimes };
-          delete updatedTimes[personId];
-          return updatedTimes;
-        });
-      }
-    });
-  }, []);
-
-  useEffect(() => {
-    if (!timerActive) {
-      return () => {};
-    }
-
-    const interval = setInterval(() => {
-      setCheckInTimes((prevTimes) => {
-        const now = new Date().getTime();
-        const updatedTimes = { ...prevTimes };
-        let hasActiveCheckIns = false;
-
-        Object.keys(updatedTimes).forEach((personId) => {
-          if (now - updatedTimes[personId] > 5000) {
-            delete updatedTimes[personId];
-          } else {
-            hasActiveCheckIns = true;
-          }
-        });
-
-        if (!hasActiveCheckIns) {
-          setTimerActive(false);
-          clearInterval(interval);
-        }
-
-        return updatedTimes;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [timerActive]);
-
-  const eventPeople = useMemo(
-    () =>
-      selectedEvent
-        ? people.filter((person) => person.communityId === selectedEvent)
-        : [],
-    [selectedEvent, people]
-  );
-
-  if (!ready) {
-    return <div>Loading...</div>;
+  if (!eventPeople || eventPeople.length === 0) {
+    return null;
   }
-  return (
-    <div className="mx-auto w-full p-4">
-      <h1 className="text-lg font-bold">Event Check-in</h1>
-      <EventSelector
-        selectedEvent={selectedEvent}
-        handleEventChange={handleEventChange}
-        communities={communities}
-      />
 
-      <Summary eventPeople={eventPeople} />
-      <PeopleList
-        eventPeople={eventPeople}
-        handleCheckIn={handleCheckIn}
-        handleCheckOut={handleCheckOut}
-        checkInTimes={checkInTimes}
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const filteredEventPeople = eventPeople
+    .filter((person) => {
+      const fullName = `${person.firstName} ${person.lastName}`.toLowerCase();
+      return fullName.includes(searchTerm.toLowerCase());
+    })
+    .sort((a, b) => {
+      const nameA = `${a.firstName} ${a.lastName}`.toLowerCase();
+      const nameB = `${b.firstName} ${b.lastName}`.toLowerCase();
+      if (nameA < nameB) return -1;
+      if (nameA > nameB) return 1;
+      return 0;
+    });
+
+  return (
+    <div className="flex flex-col justify-end w-full max-w-[736px] mx-auto">
+      <input
+        type="text"
+        value={searchTerm}
+        onChange={handleSearchChange}
+        placeholder="Search by name"
+        className="mb-4 rounded border border-gray-300 p-2 w-full sm:w-auto sm:ml-auto"
       />
+      <ul className="list-none p-0">
+        {filteredEventPeople.map((person) => {
+          const checkInDate = new Date(person.checkInDate);
+          const now = new Date();
+          const shouldShowCheckOutButton =
+            person.checkInDate &&
+            !person.checkOutDate &&
+            now - checkInDate > 5000;
+          return (
+            <li
+              key={person._id}
+              className="mb-2 rounded border border-gray-300 p-2 flex flex-col"
+            >
+              <div>
+                {person.firstName} {person.lastName}
+              </div>
+              <div>{person.company}</div>
+              <div>{person.title}</div>
+              <div>
+                Check-in date:{' '}
+                {person.checkInDate
+                  ? new Date(person.checkInDate).toLocaleString()
+                  : 'N/A'}
+              </div>
+              <div>
+                Check-out date:{' '}
+                {person.checkOutDate
+                  ? new Date(person.checkOutDate).toLocaleString()
+                  : 'N/A'}
+              </div>
+              {!person.checkInDate && (
+                <button
+                  onClick={() => handleCheckIn(person._id)}
+                  className="my-1.5 rounded bg-green-500 px-2 py-1 text-white"
+                >
+                  Check-in {person.firstName} {person.lastName}
+                </button>
+              )}
+              {checkInTimes && shouldShowCheckOutButton && (
+                <button
+                  onClick={() => handleCheckOut(person._id)}
+                  className="my-1.5 rounded bg-red-500 px-2 py-1 text-white"
+                >
+                  Check-out {person.firstName} {person.lastName}
+                </button>
+              )}
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 };
