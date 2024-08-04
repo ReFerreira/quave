@@ -5,7 +5,7 @@ export const EventSelector = ({
   handleEventChange,
   communities,
 }) => (
-  <div className="mb-6 flex flex-col items-center w-full max-w-[736px] mx-auto">
+  <div className="mx-auto mb-6 flex w-full max-w-[736px] flex-col items-center">
     <label htmlFor="eventSelector" className="mb-4 block font-bold">
       Select an Event
     </label>

@@ -60,7 +60,7 @@ export const App = () => {
 
   useEffect(() => {
     if (!timerActive) {
-      return () => {};
+      return () => { };
     }
 
     const interval = setInterval(() => {
@@ -98,10 +98,13 @@ export const App = () => {
   );
 
   if (!ready) {
-    return <div>Loading...</div>;
+    return <div className="mx-auto flex w-full flex-col items-center p-4 lg:w-3/4 justify-center h-screen">
+      Loading...
+    </div>;
   }
+
   return (
-    <div className="mx-auto w-full p-4 flex flex-col items-center lg:w-3/4">
+    <div className="mx-auto flex w-full flex-col items-center p-4 lg:w-3/4">
       <h1 className="text-lg font-bold">Event Check-in</h1>
       <EventSelector
         selectedEvent={selectedEvent}
